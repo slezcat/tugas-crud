@@ -4,7 +4,7 @@ const initialState = {
   isAlertOpen: false,
   option: "",
   alertMessage: "",
-  duration: 4000,
+  duration: 3000,
 };
 
 const alertSlice = createSlice({
@@ -14,7 +14,7 @@ const alertSlice = createSlice({
     openAlert: (state, action) => {
       state.isAlertOpen = true;
       state.option = action.payload.option;
-      state.alertMessage = action.payload.message;
+      state.alertMessage = action.payload.alertMessage;
     },
     closeAlert: (state) => {
       state.alertMessage = "";

@@ -7,7 +7,7 @@ import { CardHeader, Divider, IconButton } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useAppDispatch } from "../app/hooks";
 import { openForm } from "../features/formSlice";
-import { deleteGrocery } from "../features/grocerySlice";
+import { deleteNote } from "../features/noteSlice";
 
 export default function MyCard({ data, id, uid }: any) {
   const { fruit, date, title } = data;
@@ -20,7 +20,7 @@ export default function MyCard({ data, id, uid }: any) {
         action={
           <IconButton
             aria-label="delete"
-            onClick={() => dispatch(deleteGrocery({ uid, id }))}
+            onClick={() => dispatch(deleteNote({ uid, id }))}
           >
             <ClearIcon />
           </IconButton>
@@ -32,9 +32,13 @@ export default function MyCard({ data, id, uid }: any) {
           </Typography>
         }
       />
-      <Divider variant="middle" />
+      {/* <Divider variant="middle" /> */}
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ wordWrap: "break-word" }}
+        >
           {fruit}
         </Typography>
       </CardContent>

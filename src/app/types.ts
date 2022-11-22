@@ -1,5 +1,5 @@
-export type GroceryList = {
-  groceryList: Grocery[];
+export type NoteList = {
+  noteList: Note[];
   status: string;
   message: any;
 };
@@ -10,6 +10,6 @@ export type Form = {
   date: String;
 };
 
-export interface Grocery {
+export interface Note {
   [id: string]: { title: string; date: string; fruit: string };
 }

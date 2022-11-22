@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
 import { addDoc, deleteDoc, getDocs, updateDoc } from "firebase/firestore";
 import { colRef, docRef } from "../app/ref";
-import { Grocery, GroceryList } from "../app/types";
+import {Note, NoteList } from "../app/types";
 
-export const getGrocery = createAsyncThunk(
-  "grocery/getGrocery",
+export const getNote = createAsyncThunk(
+  "note/getNote",
   async ({ uid }: any, thunkAPI) => {
     try {
       let data: any = [];
@@ -19,8 +19,8 @@ export const getGrocery = createAsyncThunk(
   },
 );
 
-export const createGrocery = createAsyncThunk(
-  "grocery/createGrocery",
+export const createNote = createAsyncThunk(
+  "note/createNote",
   async ({ formData, uid }: any, thunkAPI) => {
     try {
       const addedDocRef = await addDoc(colRef(uid), {
@@ -33,8 +33,8 @@ export const createGrocery = createAsyncThunk(
   },
 );
 
-export const updateGrocery = createAsyncThunk(
-  "grocery/updateGrocery",
+export const updateNote = createAsyncThunk(
+  "note/updateNote",
   async ({ updatedData, uid, id }: any, thunkAPI) => {
     try {
       await updateDoc(docRef(uid, id), {
@@ -47,8 +47,8 @@ export const updateGrocery = createAsyncThunk(
   },
 );
 
-export const deleteGrocery = createAsyncThunk(
-  "grocery/deleteGrocery",
+export const deleteNote = createAsyncThunk(
+  "note/deleteNote",
   async ({ uid, id }: any, thunkAPI) => {
     try {
       await deleteDoc(docRef(uid, id));
@@ -59,90 +59,90 @@ export const deleteGrocery = createAsyncThunk(
   },
 );
 
-const initialState: GroceryList = {
-  groceryList: [{}],
+const initialState: NoteList = {
+  noteList: [{}],
   status: "",
   message: "",
 };
 
-export const grocerySlice = createSlice({
-  name: "grocery",
+export const noteSlice = createSlice({
+  name: "note",
   initialState,
   reducers: {
     reset: (state) => {
-      state.groceryList = [{}];
+      state.noteList = [{}];
       state.status = "";
       state.message = "";
     },
   },
   extraReducers: (builder) => {
     builder
-      // createGrocery
-      .addCase(createGrocery.pending, (state) => {
+      // createNote
+      .addCase(createNote.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(createGrocery.fulfilled, (state, action) => {
+      .addCase(createNote.fulfilled, (state, action) => {
         state.status = "idle";
-        state.groceryList = [...state.groceryList, action.payload];
-        state.message = "Note successfully added";
+        state.noteList = [...state.noteList, action.payload];
+        state.message = "note successfully added";
       })
-      .addCase(createGrocery.rejected, (state, action) => {
+      .addCase(createNote.rejected, (state, action) => {
         state.message = action.payload;
         state.status = "failed";
       })
 
-      // getGrocery
-      .addCase(getGrocery.pending, (state) => {
+      // getNote
+      .addCase(getNote.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(getGrocery.fulfilled, (state, action) => {
+      .addCase(getNote.fulfilled, (state, action) => {
         state.status = "idle";
-        state.groceryList = action.payload;
+        state.noteList = action.payload;
         state.message = "";
       })
-      .addCase(getGrocery.rejected, (state, action) => {
+      .addCase(getNote.rejected, (state, action) => {
         state.message = action.payload;
         state.status = "failed";
       })
 
-      // editGrocery
-      .addCase(updateGrocery.pending, (state) => {
+      // editNote
+      .addCase(updateNote.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(updateGrocery.fulfilled, (state, action) => {
+      .addCase(updateNote.fulfilled, (state, action) => {
         state.status = "idle";
-        const foundIndex = current(state.groceryList).findIndex(
-          (grocery: Grocery) =>
-            Object.keys(grocery).toString() === action.payload.id,
+        const foundIndex = current(state.noteList).findIndex(
+          (note: Note) =>
+            Object.keys(note).toString() === action.payload.id,
         );
-        state.message = "Note successfully updated";
-        state.groceryList[foundIndex][action.payload.id] =
+        state.message = "note successfully updated";
+        state.noteList[foundIndex][action.payload.id] =
           action.payload.updatedData;
       })
-      .addCase(updateGrocery.rejected, (state, action) => {
+      .addCase(updateNote.rejected, (state, action) => {
         state.message = action.payload;
         state.status = "failed";
       })
 
-      // deleteGrocery
-      .addCase(deleteGrocery.pending, (state) => {
+      // deleteNote
+      .addCase(deleteNote.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(deleteGrocery.fulfilled, (state, action) => {
+      .addCase(deleteNote.fulfilled, (state, action) => {
         state.status = "idle";
-        state.groceryList = current(state.groceryList).filter(
-          (grocery: Grocery) =>
-            Object.keys(grocery).toString() !== action.payload,
+        state.noteList = current(state.noteList).filter(
+          (note: Note) =>
+            Object.keys(note).toString() !== action.payload,
         );
-        state.message = "Note successfully deleted";
+        state.message = "note successfully deleted";
       })
-      .addCase(deleteGrocery.rejected, (state, action) => {
+      .addCase(deleteNote.rejected, (state, action) => {
         state.message = action.payload;
         state.status = "failed";
       });
   },
 });
 
-export const { reset } = grocerySlice.actions;
+export const { reset } = noteSlice.actions;
 
-export default grocerySlice.reducer;
+export default noteSlice.reducer;

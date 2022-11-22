@@ -1,33 +1,28 @@
-import { Card, Grid, Modal, TextField } from "@mui/material";
+import {
+  Dialog,
+  DialogContent,
+  Grid,
+  TextField,
+} from "@mui/material";
 import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { closeForm } from "../features/formSlice";
-import { createGrocery, updateGrocery } from "../features/grocerySlice";
-import { Form } from "../app/types";
+import { createNote, updateNote } from "../features/noteSlice";
 import { openAlert } from "../features/alertSlice";
 
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 500,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
-
 const MyForm = ({ uid }: any) => {
-  const { message, status } = useAppSelector((store: any) => store.grocery);
+  const { message, status } = useAppSelector((store: any) => store.note);
   const { content, isOpen, id } = useAppSelector((store: any) => store.form);
   const dispatch = useAppDispatch();
 
-  const [formData, setFormData] = useState<any>({
+  const initialState = {
     title: "",
     fruit: "",
     date: "",
-  });
+  };
+
+  const [formData, setFormData] = useState<any>(initialState);
   const { title, fruit, date } = formData;
 
   useEffect(() => {
@@ -36,7 +31,7 @@ const MyForm = ({ uid }: any) => {
       dispatch(
         openAlert({
           option: "success",
-          message: message,
+          alertMessage: message,
         }),
       );
   }, [status]);
@@ -50,25 +45,34 @@ const MyForm = ({ uid }: any) => {
 
   return (
     <>
-      <Modal open={isOpen} onClose={() => dispatch(closeForm())}>
-        <Card sx={style}>
+      <Dialog
+        open={isOpen}
+        onClose={() => {
+          setFormData(initialState);
+          dispatch(closeForm());
+        }}
+      >
+        <DialogContent>
           <Grid container spacing={2} sx={{ justifyContent: "center" }}>
-            <Grid item xs={6}>
+            <Grid item xs={12} lg={6}>
               <TextField
                 label="Title"
                 variant="outlined"
                 type="text"
+                autoComplete={""}
                 name="title"
+                required
                 sx={{ width: "100%" }}
                 onChange={onChange}
                 defaultValue={content?.title}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} lg={6}>
               <TextField
                 label="date"
                 type="date"
                 name="date"
+                autoComplete={""}
                 sx={{ width: "100%" }}
                 InputLabelProps={{
                   shrink: true,
@@ -79,7 +83,8 @@ const MyForm = ({ uid }: any) => {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="Fruit"
+                autoComplete={""}
+                label="Note"
                 variant="outlined"
                 type="text"
                 fullWidth
@@ -95,8 +100,18 @@ const MyForm = ({ uid }: any) => {
                 <Button
                   variant="contained"
                   onClick={() => {
-                    dispatch(createGrocery({ formData, uid }));
-                    dispatch(closeForm());
+                    if (title) {
+                      dispatch(createNote({ formData, uid }));
+                      setFormData(initialState);
+                      dispatch(closeForm());
+                    } else {
+                      dispatch(
+                        openAlert({
+                          option: "warning",
+                          alertMessage: "Please fill the required fields",
+                        }),
+                      );
+                    }
                   }}
                 >
                   Add
@@ -108,9 +123,10 @@ const MyForm = ({ uid }: any) => {
                     const updatedData = {
                       date: date || content.date,
                       title: title || content.title,
-                      fruit: fruit || content.date,
+                      fruit: fruit || content.fruit,
                     };
-                    dispatch(updateGrocery({ updatedData, uid, id }));
+                    dispatch(updateNote({ updatedData, uid, id }));
+                    setFormData(initialState);
                     dispatch(closeForm());
                   }}
                 >
@@ -119,8 +135,8 @@ const MyForm = ({ uid }: any) => {
               )}
             </Grid>
           </Grid>
-        </Card>
-      </Modal>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

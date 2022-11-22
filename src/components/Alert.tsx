@@ -9,9 +9,9 @@ const Alert = forwardRef(function Alert(props:any, ref:any) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function MyAlert({ option, message }:any) {
+export default function MyAlert() {
   const dispatch = useAppDispatch();
-  const { isAlertOpen } = useAppSelector((state) => state.alert);
+  const { isAlertOpen,option, alertMessage,duration } = useAppSelector((state) => state.alert);
 
   const handleClose = (event:any, reason:string) => {
     if (reason === "clickaway") {
@@ -20,46 +20,25 @@ export default function MyAlert({ option, message }:any) {
     dispatch(closeAlert());
   };
 
-  const options = (option:string) => {
-    switch (option) {
-      case "success":
-        return {
-          severity: "success",
-          message,
-        };
-      case "warning":
-        return {
-          severity: "warning",
-          message,
-        };
-      case "error":
-        return {
-          severity: "error",
-          message,
-        };
-      default:
-        break;
-    }
-  };
-
   return (
-    <Stack spacing={2} sx={{ width: "100%" }}>
+   
       <Snackbar
         open={isAlertOpen}
-        autoHideDuration={5000}
+        autoHideDuration={duration}
         onClose={handleClose}
         anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
+            vertical: 'bottom',
+            horizontal: 'left',
         }}
+        sx={{ bottom: { xs: 90, sm: 10 } }}
       >
         <Alert
-          severity={options(option)?.severity}
+          severity={option}
           sx={{ width: "100%" ,pr:3}}
         >
-          {options(option)?.message}
+          {alertMessage}
         </Alert>
       </Snackbar>
-    </Stack>
+   
   );
 }
